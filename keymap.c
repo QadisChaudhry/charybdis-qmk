@@ -16,7 +16,8 @@ enum custom_keycodes {
     BACK,
     FORWARD,
     NEWTAB,
-    CLOSETAB
+    CLOSETAB,
+    CTRL_GUI
 };
 
 #define L2_DEL LT(_Layer2, KC_DEL)
@@ -31,16 +32,16 @@ enum custom_keycodes {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_Layer1] = LAYOUT(
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       REDO,    KC_BTN2, COPY,    PASTE,   NEWTAB,  CLOSETAB,
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       UNDO,    KC_BTN1, KC_BTN3, KC_LSFT, KC_LCTL, XXXXXXX,
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, DRGSCRL, KC_ESC,  KC_ENT,  SNP_TOG, XXXXXXX,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       UNDO,    REDO,    COPY,    PASTE,   KC_SPC,   CLOSETAB,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       KC_BTN2, KC_BTN1, KC_BTN3, KC_LSFT, CTRL_GUI, NEWTAB,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, DRGSCRL, KC_ESC,  KC_ENT,  SNP_TOG,  XXXXXXX,
                                   XXXXXXX, XXXXXXX, XXXXXXX,       L3_TAB,  L2_DEL
     ),
 
     [_Layer2] = LAYOUT(
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       DPI_MOD, BACK,     TABLEFT,    TABRIGHT, FORWARD, XXXXXXX,
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       KC_LEFT, KC_DOWN,  KC_UP,      KC_RIGHT, DLEFT,   DRIGHT,
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, C(KC_UP), C(KC_DOWN), XXXXXXX,  XXXXXXX, XXXXXXX,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, BACK,     TABLEFT, TABRIGHT, FORWARD, XXXXXXX,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       KC_LEFT, KC_DOWN,  KC_UP,   KC_RIGHT, DLEFT,   DRIGHT,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, C(KC_UP), KC_F10,  XXXXXXX,  XXXXXXX, XXXXXXX,
                                   XXXXXXX, XXXXXXX, XXXXXXX,       _______, _______
     ),
 
@@ -169,6 +170,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     register_code(KC_LCTL);
                     tap_code(KC_W);
+                    unregister_code(KC_LCTL);
+                }
+            }
+            return false;
+        case CTRL_GUI:
+            if (record->event.pressed) {
+                if (host_os == OS_MACOS || host_os == OS_IOS) {
+                    register_code(KC_LGUI);
+                } else {
+                    register_code(KC_LCTL);
+                }
+            } else {
+                if (host_os == OS_MACOS || host_os == OS_IOS) {
+                    unregister_code(KC_LGUI);
+                } else {
                     unregister_code(KC_LCTL);
                 }
             }
