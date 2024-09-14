@@ -17,10 +17,11 @@ enum custom_keycodes {
     FORWARD,
     NEWTAB,
     CLOSETAB,
-    CTRL_GUI
+    CTRL_GUI,
+    LB, LF, WB, WF
 };
 
-#define L2_DEL LT(_Layer2, KC_DEL)
+#define L2_SPC LT(_Layer2, KC_SPC)
 #define L3_TAB LT(_Layer3, KC_TAB)
 
 #define TABLEFT S(C(KC_TAB))
@@ -32,16 +33,16 @@ enum custom_keycodes {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_Layer1] = LAYOUT(
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       UNDO,    REDO,    COPY,    PASTE,   KC_SPC,   KC_BSPC,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       UNDO,    REDO,    COPY,    PASTE,   KC_DEL,   KC_BSPC,
        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       KC_BTN2, KC_BTN1, DRGSCRL, KC_LSFT, CTRL_GUI, NEWTAB,
        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, KC_BTN3, KC_ESC,  KC_ENT,  SNP_TOG,  CLOSETAB,
-                                  XXXXXXX, XXXXXXX, XXXXXXX,       L3_TAB,  L2_DEL
+                                  XXXXXXX, XXXXXXX, XXXXXXX,       L3_TAB,  L2_SPC
     ),
 
     [_Layer2] = LAYOUT(
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, BACK,     TABLEFT, TABRIGHT, FORWARD, XXXXXXX,
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       KC_LEFT, KC_DOWN,  KC_UP,   KC_RIGHT, DLEFT,   DRIGHT,
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       XXXXXXX, C(KC_UP), KC_F10,  DPI_RMOD, DPI_MOD, XXXXXXX,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       C(KC_UP), BACK,     TABLEFT, TABRIGHT, FORWARD, XXXXXXX,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       KC_LEFT,  KC_DOWN,  KC_UP,   KC_RIGHT, DLEFT,   DRIGHT,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,       LB,       WB,       WF,      LF,       KC_F10,  XXXXXXX,
                                   XXXXXXX, XXXXXXX, XXXXXXX,       _______, _______
     ),
 
@@ -56,7 +57,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case L2_DEL:
+        case L2_SPC:
             return TAPPING_TERM - 110;
         case L3_TAB:
             return TAPPING_TERM - 110;
@@ -185,6 +186,54 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (host_os == OS_MACOS || host_os == OS_IOS) {
                     unregister_code(KC_LGUI);
                 } else {
+                    unregister_code(KC_LCTL);
+                }
+            }
+            return false;
+        case LB:
+            if (record->event.pressed) {
+                if (host_os == OS_MACOS || host_os == OS_IOS) {
+                    register_code(KC_LGUI);
+                    tap_code(KC_LEFT);
+                    unregister_code(KC_LGUI);
+                } else {
+                    tap_code(KC_HOME);
+                }
+            }
+            return false;
+        case LF:
+            if (record->event.pressed) {
+                if (host_os == OS_MACOS || host_os == OS_IOS) {
+                    register_code(KC_LGUI);
+                    tap_code(KC_RIGHT);
+                    unregister_code(KC_LGUI);
+                } else {
+                    tap_code(KC_END);
+                }
+            }
+            return false;
+        case WB:
+            if (record->event.pressed) {
+                if (host_os == OS_MACOS || host_os == OS_IOS) {
+                    register_code(KC_LALT);
+                    tap_code(KC_LEFT);
+                    unregister_code(KC_LALT);
+                } else {
+                    register_code(KC_LCTL);
+                    tap_code(KC_LEFT);
+                    unregister_code(KC_LCTL);
+                }
+            }
+            return false;
+        case WF:
+            if (record->event.pressed) {
+                if (host_os == OS_MACOS || host_os == OS_IOS) {
+                    register_code(KC_LALT);
+                    tap_code(KC_RIGHT);
+                    unregister_code(KC_LALT);
+                } else {
+                    register_code(KC_LCTL);
+                    tap_code(KC_RIGHT);
                     unregister_code(KC_LCTL);
                 }
             }
