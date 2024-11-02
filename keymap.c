@@ -25,18 +25,11 @@ enum custom_keycodes {
     CLOSETAB,
     CTRL_GUI,
     LB, LF, WB, WF,
-    MOUSE
+    MOUSE, MO_LAYER2
 };
-
-#define L1_SPC LT(_Layer1, KC_SPC)
-#define L2_TAB LT(_Layer2, KC_TAB)
 
 #define L1_ENT LT(_Layer1, KC_ENT)
 #define L2_ENT LT(_Layer2, KC_ENT)
-#define L1_BSPC LT(_Layer1, KC_BSPC)
-#define L2_SPC LT(_Layer2, KC_SPC)
-#define Layer1 MO(_Layer1)
-#define Layer2 MO(_Layer2)
 #define L3_ESC LT(_Layer3, KC_ESC)
 
 #define C_Z LCTL_T(KC_Z)
@@ -85,17 +78,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_Layer3] = LAYOUT(
-     _______, KC_MS_BTN1, KC_F7, KC_F8, KC_F9, _______,          _______, KC_AMPR, KC_ASTR, KC_LPRN, _______, _______,
-     _______, _______,    KC_F4, KC_F5, KC_F6, HYPR(KC_F),       _______, KC_DLR,  KC_PERC, KC_CIRC, KC_TILD, KC_UNDS,
-     _______, KC_LCTL,    KC_F1, KC_F2, KC_F3, _______,          _______, KC_EXLM, KC_AT,   KC_HASH, KC_GRV,  _______,
-                             _______, _______, _______,          _______, _______
+     _______, KC_MS_BTN1, KC_F7, KC_F8, KC_F9,  _______,         _______, KC_AMPR, KC_ASTR, KC_LPRN, _______, _______,
+     _______, _______,    KC_F4, KC_F5, KC_F6,  HYPR(KC_G),      _______, KC_DLR,  KC_PERC, KC_CIRC, KC_TILD, KC_UNDS,
+     _______, KC_LCTL,    KC_F1, KC_F2, KC_F3,  _______,         _______, KC_EXLM, KC_AT,   KC_HASH, KC_GRV,  _______,
+                               _______, KC_F10, C(KC_UP),        _______, _______
     ),
 
     [_Layer4] = LAYOUT(
      _______, _______, _______, _______, _______, _______,       UNDO,    REDO,    COPY,    PASTE,   KC_DEL,   KC_BSPC,
      _______, _______, _______, _______, _______, _______,       KC_BTN2, KC_BTN1, DRGSCRL, KC_LSFT, SNP_TOG,  NEWTAB,
      _______, _______, _______, _______, _______, _______,       XXXXXXX, KC_BTN3, KC_ESC,  KC_ENT,  CTRL_GUI, CLOSETAB,
-                                MOUSE,   _______, _______,       _______, KC_ENT
+                                MOUSE,   _______, _______,       _______, MO_LAYER2
     ),
 
 };
@@ -107,8 +100,6 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case L2_ENT:
             return TAPPING_TERM - 110;
         case L3_ESC:
-            return TAPPING_TERM - 110;
-        case L1_SPC:
             return TAPPING_TERM - 110;
         default:
             return TAPPING_TERM;
@@ -320,7 +311,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
         case MOUSE:
+            auto_pointer_layer_timer = 0;
             layer_off(_Layer4);
+            return false;
+        case MO_LAYER2:
+            if (record->event.pressed) {
+                layer_off(_Layer4);
+                layer_on(_Layer2);
+            } else {
+                layer_off(_Layer2);
+                layer_on(_Layer4);
+            }
             return false;
     }
     return true;
