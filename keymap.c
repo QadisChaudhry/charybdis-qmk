@@ -1,3 +1,5 @@
+/* qmk flash -c -kb bastardkb/charybdis/3x6/v2/splinky_3 -km qadis */
+
 #include QMK_KEYBOARD_H
 #include <stdio.h>
 #include "os_detection.h"
@@ -5,32 +7,39 @@
 
 enum charybdis_keymap_layers {
     _QWERTY,
+    _COLEMAK,
+    _GRAPHITE,
     _Layer1,
     _Layer2,
     _Layer3,
-    _Layer4
+    _Layer4,
+    _Layer5
 };
 
 enum custom_keycodes {
     QWERTY = SAFE_RANGE,
-    PSSWD,
-    PSSWD2,
-    UNDO,
-    REDO,
-    COPY,
-    PASTE,
-    BACK,
-    FORWARD,
-    NEWTAB,
-    CLOSETAB,
+    COLEMAK,
+    GRAPHITE,
+    PSSWD, PSSWD2,
+    UNDO, REDO,
+    COPY, PASTE,
+    BACK, FORWARD,
+    NEWTAB, CLOSETAB,
     CTRL_GUI,
     LB, LF, WB, WF,
-    MOUSE, MO_LAYER2
+    MS_JGL
+    /* MOUSE, MO_LAYER2 */
 };
 
 #define L1_ENT LT(_Layer1, KC_ENT)
+#define L1_SPC LT(_Layer1, KC_SPC)
 #define L2_ENT LT(_Layer2, KC_ENT)
 #define L3_ESC LT(_Layer3, KC_ESC)
+
+#define L4_L LT(_Layer4, KC_L)
+#define L4_I LT(_Layer4, KC_I)
+#define L4_E LT(_Layer4, KC_E)
+#define L4_DEL LT(_Layer4, KC_DEL)
 
 #define C_Z LCTL_T(KC_Z)
 #define A_X LALT_T(KC_X)
@@ -40,6 +49,16 @@ enum custom_keycodes {
 #define G_COMM LGUI_T(KC_COMM)
 #define A_DOT LALT_T(KC_DOT)
 #define C_SLSH LCTL_T(KC_SLSH)
+
+#define S_D LSFT_T(KC_D)
+#define S_H LSFT_T(KC_H)
+
+#define C_Q LCTL_T(KC_Q)
+#define G_M LGUI_T(KC_M)
+#define S_C LSFT_T(KC_C)
+#define S_P LSFT_T(KC_P)
+#define G_DOT LGUI_T(KC_DOT)
+#define A_MINS LALT_T(KC_MINS)
 
 #define A_PIPE LALT_T(KC_PIPE)
 #define G_LBRC LGUI_T(KC_LBRC)
@@ -57,52 +76,92 @@ enum custom_keycodes {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_QWERTY] = LAYOUT(
-     KC_TAB,        KC_Q, KC_W, KC_E,     KC_R,   KC_T,          KC_Y,   KC_U,   KC_I,   KC_O,  KC_P,    KC_EQL,
-     L3_ESC,        KC_A, KC_S, KC_D,     KC_F,   KC_G,          KC_H,   KC_J,   KC_K,   KC_L,  KC_SCLN, KC_QUOT,
-     OSM(MOD_LSFT), C_Z,  A_X,  G_C,      S_V,    KC_B,          KC_N,   S_M,    G_COMM, A_DOT, C_SLSH,  OSM(MOD_LSFT),
-                                CTRL_GUI, L1_ENT, KC_BSPC,       KC_SPC, L2_ENT
+     KC_TAB,        KC_Q, KC_W, KC_E,   KC_R,    KC_T,            KC_Y,   KC_U,  KC_I,   KC_O,  KC_P,    KC_EQL,
+     L3_ESC,        KC_A, KC_S, KC_D,   KC_F,    KC_G,            KC_H,   KC_J,  KC_K,   L4_L,  KC_SCLN, KC_QUOT,
+     OSM(MOD_LSFT), C_Z,  A_X,  G_C,    S_V,     KC_B,            KC_N,   S_M,   G_COMM, A_DOT, C_SLSH,  OSM(MOD_LSFT),
+                                L4_DEL, KC_BSPC, L1_ENT,          L2_ENT,  L1_SPC
+    ),
+
+    [_COLEMAK] = LAYOUT(
+     KC_TAB,        KC_Q, KC_W, KC_F,   KC_P,    KC_B,            KC_J,   KC_L,  KC_U,   KC_Y,  KC_SCLN, KC_EQL,
+     L3_ESC,        KC_A, KC_R, KC_S,   KC_T,    KC_G,            KC_M,   KC_N,  KC_E,   L4_I,  KC_O,    KC_QUOT,
+     OSM(MOD_LSFT), C_Z,  A_X,  G_C,    S_D,     KC_V,            KC_K,   S_H,   G_COMM, A_DOT, C_SLSH,  OSM(MOD_LSFT),
+                                L4_DEL, KC_BSPC, L1_ENT,          L2_ENT,  L1_SPC
+    ),
+
+    [_GRAPHITE] = LAYOUT(
+     KC_TAB,        KC_B, KC_L, KC_D,   KC_W,    KC_Z,            KC_MINS, KC_F,  KC_O,   KC_U,  KC_J,   KC_SCLN,
+     L3_ESC,        KC_N, KC_R, KC_T,   KC_S,    KC_G,            KC_Y,    KC_H,  KC_A,   L4_E,  KC_I,   KC_QUOT,
+     OSM(MOD_LSFT), C_Q,  A_X,  G_M,    S_C,     KC_V,            KC_K,    S_P,   G_COMM, A_DOT, C_SLSH, OSM(MOD_LSFT),
+                                L4_DEL, KC_BSPC, L1_ENT,          L2_ENT,  L1_SPC
     ),
 
     [_Layer1] = LAYOUT(
-     PSSWD,   _______, _______, KC_LCBR, KC_RCBR, _______,       QK_BOOT, KC_7, KC_8, KC_9, KC_PAST, KC_PEQL,
+     PSSWD,   PSSWD2,  _______, KC_LCBR, KC_RCBR, _______,       _______, KC_7, KC_8, KC_9, KC_PAST, KC_EQL,
      KC_CAPS, _______, KC_BSLS, KC_LPRN, KC_RPRN, _______,       KC_DOT,  KC_4, KC_5, KC_6, KC_PPLS, KC_MINS,
      _______, KC_LCTL, A_PIPE,  G_LBRC,  S_RBRC,  _______,       KC_COMM, KC_1, KC_2, KC_3, KC_PSLS, _______,
-                                _______, _______, _______,       _______, KC_0
+                                _______, _______, _______,       KC_0, _______
     ),
 
     [_Layer2] = LAYOUT(
-     _______, _______, _______, _______, _______, _______,       _______, BACK,    TABLEFT, TABRIGHT, FORWARD, _______,
-     _______, _______, _______, _______, _______, _______,       KC_LEFT, KC_DOWN, KC_UP,   KC_RIGHT, DLEFT,   DRIGHT,
-     _______, KC_LCTL, KC_LALT, KC_LGUI, KC_LSFT, _______,       LB,      WB,      WF,      LF,       _______, _______,
+     _______, _______, _______, _______, _______, _______,       _______, BACK,    TABLEFT, TABRIGHT, FORWARD,  _______,
+     _______, _______, _______, _______, _______, _______,       KC_LEFT, KC_DOWN, KC_UP,   KC_RIGHT, DLEFT,    DRIGHT,
+     _______, KC_LCTL, KC_LALT, KC_LGUI, KC_LSFT, _______,       LB,      WB,      WF,      LF,       C(KC_UP), KC_F10,
                                 _______, _______, _______,       _______, _______
     ),
 
     [_Layer3] = LAYOUT(
-     _______, KC_MS_BTN1, KC_F7, KC_F8, KC_F9,  _______,         _______, KC_AMPR, KC_ASTR, KC_LPRN, _______, _______,
-     _______, _______,    KC_F4, KC_F5, KC_F6,  HYPR(KC_G),      _______, KC_DLR,  KC_PERC, KC_CIRC, KC_TILD, KC_UNDS,
-     _______, KC_LCTL,    KC_F1, KC_F2, KC_F3,  _______,         _______, KC_EXLM, KC_AT,   KC_HASH, KC_GRV,  _______,
-                               _______, KC_F10, C(KC_UP),        _______, _______
+     _______, SS1,     KC_F7, KC_F8,   KC_F9,  _______,         _______, KC_AMPR, KC_ASTR, KC_LPRN, _______, _______,
+     _______, SS2,     KC_F4, KC_F5,   KC_F6,  HYPR(KC_G),      _______, KC_DLR,  KC_PERC, KC_CIRC, KC_TILD, KC_UNDS,
+     _______, KC_LCTL, KC_F1, KC_F2,   KC_F3,  _______,         _______, KC_EXLM, KC_AT,   KC_HASH, KC_GRV,  _______,
+                              _______, KC_F10, C(KC_UP),        _______, _______
     ),
 
     [_Layer4] = LAYOUT(
      _______, _______, _______, _______, _______, _______,       UNDO,    REDO,    COPY,    PASTE,   KC_DEL,   KC_BSPC,
-     _______, _______, _______, _______, _______, _______,       KC_BTN2, KC_BTN1, DRGSCRL, KC_LSFT, SNP_TOG,  NEWTAB,
+     _______, _______, _______, _______, _______, _______,       KC_BTN2, KC_BTN1, DRGSCRL, _______, KC_LSFT,  NEWTAB,
      _______, _______, _______, _______, _______, _______,       XXXXXXX, KC_BTN3, KC_ESC,  KC_ENT,  CTRL_GUI, CLOSETAB,
-                                MOUSE,   _______, _______,       _______, MO_LAYER2
+                                _______, _______, _______,       _______, _______
+    ),
+
+    [_Layer5] = LAYOUT(
+     QK_BOOT, _______, _______, _______, _______, _______,       _______, _______, _______, _______,  _______, _______,
+     _______, _______, _______, _______, _______, _______,       MS_JGL,  QWERTY,  COLEMAK, GRAPHITE, _______, _______,
+     _______, _______, _______, _______, _______, _______,       _______, _______, _______, _______,  _______, _______,
+                                _______, _______, _______,       _______, _______
     ),
 
 };
 
+layer_state_t layer_state_set_user(layer_state_t state) {
+    return update_tri_layer_state(state, _Layer1, _Layer2, _Layer5);
+}
+
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case L1_ENT:
-            return TAPPING_TERM - 110;
-        case L2_ENT:
-            return TAPPING_TERM - 110;
+        case L2_ENT || L1_ENT:
+            return TAPPING_TERM - 106;
         case L3_ESC:
-            return TAPPING_TERM - 110;
+            return TAPPING_TERM - 100;
         default:
             return TAPPING_TERM;
+    }
+}
+
+bool is_mouse_jiggle_active = false;
+bool mouse_jiggle_direction = false;
+uint16_t mouse_jiggle_frequency = 1500;
+uint16_t mouse_jiggle_timer = 0;
+void matrix_scan_user(void) {
+    if (is_keyboard_master()) {
+        if (mouse_jiggle_timer == 0) mouse_jiggle_timer = timer_read();
+    }
+    if (is_mouse_jiggle_active) {
+        if (timer_elapsed(mouse_jiggle_timer) > mouse_jiggle_frequency) {
+            mouse_jiggle_timer = timer_read();
+            mouse_jiggle_direction ? tap_code(KC_MS_LEFT) : tap_code(KC_MS_RIGHT);
+            mouse_jiggle_direction = !mouse_jiggle_direction;
+        }
     }
 }
 
@@ -131,6 +190,21 @@ void matrix_scan_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     os_variant_t host_os = detected_host_os();
     switch (keycode) {
+        case QWERTY:
+            if (record->event.pressed) {
+                set_single_persistent_default_layer(_QWERTY);
+            }
+            return false;
+        case COLEMAK:
+            if (record->event.pressed) {
+                set_single_persistent_default_layer(_COLEMAK);
+            }
+            return false;
+        case GRAPHITE:
+            if (record->event.pressed) {
+                set_single_persistent_default_layer(_GRAPHITE);
+            }
+            return false;
         case PSSWD:
             if (record->event.pressed) {
                 SEND_STRING("Zaibun786\n");
@@ -310,19 +384,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-        case MOUSE:
-            auto_pointer_layer_timer = 0;
-            layer_off(_Layer4);
-            return false;
-        case MO_LAYER2:
+        case MS_JGL:
             if (record->event.pressed) {
-                layer_off(_Layer4);
-                layer_on(_Layer2);
-            } else {
-                layer_off(_Layer2);
-                layer_on(_Layer4);
+                is_mouse_jiggle_active = !is_mouse_jiggle_active;
             }
             return false;
+        /* case MOUSE: */
+        /*     auto_pointer_layer_timer = 0; */
+        /*     layer_off(_Layer4); */
+        /*     return false; */
+        /* case MO_LAYER2: */
+        /*     if (record->event.pressed) { */
+        /*         layer_off(_Layer4); */
+        /*         layer_on(_Layer2); */
+        /*     } else { */
+        /*         layer_off(_Layer2); */
+        /*         layer_on(_Layer4); */
+        /*     } */
+        /*     return false; */
     }
     return true;
 }
